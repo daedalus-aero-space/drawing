@@ -1,4 +1,5 @@
 use dessin::{nalgebra::Point2, prelude::*};
+use palette::Srgba;
 use project_root::get_project_root;
 use std::fs;
 
@@ -12,12 +13,9 @@ fn main() {
 
     line.to(Point2::new(12., 5.2));
 
-    line.fill(rgb(255, 100, 100));
+    line.fill(Srgba::new(1.0, 0.392, 0.392, 1.0));
 
-    line.stroke(Stroke::Full {
-        color: rgb(255, 100, 100),
-        width: 0.05,
-    });
+    line.stroke(Stroke::new_full(Srgba::new(1.0, 0.392, 0.392, 1.0), 0.05));
 
     line.translate([5., 1.]);
 

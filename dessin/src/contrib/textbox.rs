@@ -161,6 +161,7 @@ impl From<TextBox> for Shape {
     }
 }
 
+use palette::{named, Srgb};
 #[test]
 fn one_line() {
     use assert_float_eq::*;
@@ -170,7 +171,7 @@ fn one_line() {
     let shape: Shape = dessin2!(
         TextBox!(
             { text },
-            fill = Fill::Color(Color::BLACK),
+            fill = Srgb::<f32>::from_format(named::BLACK).into_linear(),
             font_size = 5.,
             align = TextAlign::Left,
             line_spacing = 2.,
@@ -189,7 +190,7 @@ fn two_lines() {
 
     let shape: Shape = dessin2!(TextBox!(
         { text },
-        fill = Fill::Color(Color::BLACK),
+        fill = Srgb::<f32>::from_format(named::BLACK).into_linear(),
         font_size = 5.,
         align = TextAlign::Left,
         line_spacing = 2.,

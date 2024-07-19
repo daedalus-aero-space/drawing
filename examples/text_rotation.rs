@@ -1,5 +1,7 @@
 use dessin::{nalgebra::Rotation2, prelude::*};
 use dessin_image::ToImage;
+use dessin_pdf::ToPDF;
+use palette::{named, Srgb};
 use project_root::get_project_root;
 use std::{f32::consts::PI, fs};
 
@@ -12,7 +14,7 @@ struct RotatedText {
 impl From<RotatedText> for Shape {
     fn from(RotatedText { text, rotation }: RotatedText) -> Self {
         let text = dessin2!(Text!(
-            fill = Color::BLACK,
+            fill = Srgb::<f32>::from_format(named::BLACK).into_linear(),
             font_size = 1.,
             align = TextAlign::Center,
             vertical_align = TextVerticalAlign::Top,
@@ -25,7 +27,12 @@ impl From<RotatedText> for Shape {
 
         dessin2!(
             [
-                Rectangle!({ width }, { height }, stroke = (Color::BLACK, 0.1),),
+                Rectangle!(
+                    { width },
+                    { height },
+                    stroke =
+                        Stroke::new_full(Srgb::<f32>::from_format(named::BLACK).into_linear(), 0.1)
+                ),
                 { text },
             ] > (translate = [0., 15.], rotate = Rotation2::new(rotation),)
         )

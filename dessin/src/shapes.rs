@@ -80,6 +80,7 @@ pub use dynamic::*;
 pub use ellipse::*;
 use na::{Point2, Rotation2, Scale2, Vector2};
 use nalgebra::{self as na, Transform2, Translation2};
+use palette::{IntoColor, Srgb, Srgba};
 use std::{fmt, marker::PhantomData, sync::Arc};
 pub use text::*;
 
@@ -511,7 +512,7 @@ pub enum Shape {
     /// Block of style
     Style {
         /// Fill
-        fill: Option<crate::style::Fill>,
+        fill: Option<Srgba>,
         /// Stroke
         stroke: Option<crate::style::Stroke>,
         /// Styled shape. (Or Shapes if it is a [`Groupe`][Shape::Group])

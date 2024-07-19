@@ -1,7 +1,7 @@
-use std::fs;
-
 use dessin::{nalgebra::Rotation2, prelude::*};
+use palette::Srgb;
 use project_root::get_project_root;
+use std::fs;
 
 fn main() {
     // creates a rectangle with a width of 11 and a height of 6
@@ -10,13 +10,10 @@ fn main() {
     let mut rectangle = Style::new(rectangle);
 
     // paints the inside of the rectangle in green
-    rectangle.fill(Fill::Color(rgb(0, 255, 0)));
+    rectangle.fill(Srgb::new(0.0, 1.0, 0.0));
 
     // creates a grey margin of 0.2 (0.05 outside and 0.05 inside the rectangle)
-    rectangle.stroke(Stroke::Full {
-        color: rgb(0x96, 0x96, 0x96),
-        width: 0.1,
-    });
+    rectangle.stroke(Stroke::new_full(Srgb::new(0.576, 0.576, 0.576), 0.1));
 
     //chooses a rotation of 6 radians in the trigonometric direction
     rectangle.rotate(Rotation2::new(6_f32.to_radians()));

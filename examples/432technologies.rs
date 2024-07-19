@@ -3,12 +3,14 @@ use dessin::{
     prelude::*,
 };
 use dessin_image::ToImage;
+use dessin_pdf::ToPDF;
+use palette::{named, Srgb, Srgba};
 use project_root::get_project_root;
 use std::f32::consts::{FRAC_PI_4, FRAC_PI_8, PI};
 
-const C: Color = rgb(0x3b, 0x54, 0x85);
-fn c(a: u8) -> Color {
-    rgba(0x3b, 0x54, 0x85, a)
+const C: Srgb = Srgb::new(0.231, 0.329, 0.522);
+fn c(a: f32) -> Srgba {
+    Srgba::new(0.231, 0.329, 0.522, a)
 }
 
 #[derive(Default)]
@@ -17,26 +19,14 @@ impl From<InnerBubbleRing> for Shape {
     fn from(_: InnerBubbleRing) -> Self {
         let ring_strip = dessin2!(
             [
+                Circle!(stroke = Stroke::new_full(c(0.784), 0.1), radius = 1.,),
                 Circle!(
-                    stroke = Stroke::Full {
-                        color: c(200),
-                        width: 0.1
-                    },
-                    radius = 1.,
-                ),
-                Circle!(
-                    stroke = Stroke::Full {
-                        color: c(150),
-                        width: 0.1
-                    },
+                    stroke = Stroke::new_full(c(0.588), 0.1),
                     radius = 0.5,
                     translate = Translation2::new(2., 0.),
                 ),
                 Circle!(
-                    stroke = Stroke::Full {
-                        color: c(100),
-                        width: 0.1
-                    },
+                    stroke = Stroke::new_full(c(0.392), 0.1),
                     radius = 0.25,
                     translate = Translation2::new(3.2, 0.),
                 ),
@@ -69,7 +59,7 @@ impl From<BinaryRing> for Shape {
                 text = T,
                 on_curve = Circle::default().with_radius(radius),
                 font_size = 1.,
-                fill = Fill::Color(C),
+                fill = C,
             ) > ()
         )
     }
@@ -105,10 +95,7 @@ impl From<TimerRing> for Shape {
                         rotate = Rotation2::new(x as f32 * PI / 160.)
                     ))
                 },
-            ] > !(stroke = Stroke::Full {
-                color: C,
-                width: 0.2
-            })
+            ] > !(stroke = Stroke::new_full(C, 0.2))
         )
         .into()
     }
@@ -120,26 +107,14 @@ impl From<ThreeColoredRing> for Shape {
     fn from(_: ThreeColoredRing) -> Self {
         dessin2!([
             Circle!(
-                stroke = Stroke::Full {
-                    color: rgb(0x96, 0x96, 0x96),
-                    width: 0.2
-                },
+                stroke = Stroke::new_full(Srgb::new(0.588, 0.588, 0.588), 0.2),
                 radius = 40.,
             ),
             Circle!(
-                stroke = Stroke::Full {
-                    color: rgb(0x2e, 0x2e, 0x2e),
-                    width: 0.2
-                },
+                stroke = Stroke::new_full(Srgb::new(0.180, 0.180, 0.180), 0.2),
                 radius = 42.,
             ),
-            Circle!(
-                stroke = Stroke::Full {
-                    color: C,
-                    width: 0.2
-                },
-                radius = 44.,
-            ),
+            Circle!(stroke = Stroke::new_full(C, 0.2), radius = 44.,),
         ])
     }
 }
@@ -150,55 +125,33 @@ impl From<Squares> for Shape {
     fn from(_: Squares) -> Self {
         let square_line = dessin2!(
             [
+                Rectangle!(stroke = Stroke::new_full(C, 0.1), width = 2.5, height = 2.5,),
                 Rectangle!(
-                    stroke = Stroke::Full {
-                        color: C,
-                        width: 0.1
-                    },
-                    width = 2.5,
-                    height = 2.5,
-                ),
-                Rectangle!(
-                    stroke = Stroke::Full {
-                        color: c(200),
-                        width: 0.1
-                    },
+                    stroke = Stroke::new_full(c(0.784), 0.1),
                     width = 1.8,
                     height = 1.8,
                     translate = Translation2::new(2.8, 0.),
                 ),
                 Rectangle!(
-                    stroke = Stroke::Full {
-                        color: c(150),
-                        width: 0.1
-                    },
+                    stroke = Stroke::new_full(c(0.588), 0.1),
                     width = 1.2,
                     height = 1.2,
                     translate = Translation2::new(4.8, 0.),
                 ),
                 Rectangle!(
-                    stroke = Stroke::Full {
-                        color: c(100),
-                        width: 0.1
-                    },
+                    stroke = Stroke::new_full(c(0.392), 0.1),
                     width = 0.8,
                     height = 0.8,
                     translate = Translation2::new(6.2, 0.),
                 ),
                 Rectangle!(
-                    stroke = Stroke::Full {
-                        color: c(50),
-                        width: 0.1
-                    },
+                    stroke = Stroke::new_full(c(0.196), 0.1),
                     width = 0.4,
                     height = 0.4,
                     translate = Translation2::new(7.2, 0.),
                 ),
                 Rectangle!(
-                    stroke = Stroke::Full {
-                        color: c(25),
-                        width: 0.1
-                    },
+                    stroke = Stroke::new_full(c(0.098), 0.1),
                     width = 0.2,
                     height = 0.2,
                     translate = Translation2::new(7.8, 0.),
@@ -226,24 +179,24 @@ impl From<Symbol432> for Shape {
     fn from(_: Symbol432) -> Self {
         dessin2!([
             Curve!(
-                stroke = (rgb(0x7F, 0x7F, 0x7F), 0.6),
+                stroke = Stroke::new_full(Srgb::new(0.498, 0.498, 0.498), 0.6),
                 then = Point2::new(0., 0.),
                 then = Point2::new(0., 20.),
                 then = Point2::new(-9.8, 0.),
                 then = Point2::new(-8., 0.),
             ),
             Line!(
-                stroke = (rgb(0x00, 0x02, 0x60), 0.6),
+                stroke = Stroke::new_full(Srgb::new(0.0, 0.008, 0.376), 0.6),
                 from = [-10., 0.],
                 to = [13., 0.],
             ),
             Line!(
-                stroke = (rgb(0x00, 0x02, 0x60), 0.6),
+                stroke = Stroke::new_full(Srgb::new(0.0, 0.008, 0.376), 0.6),
                 from = [0., 0.],
                 to = [0., -10.],
             ),
             Text!(
-                fill = rgb(0x00, 0x02, 0x60),
+                fill = Srgba::new(0.0, 0.008, 0.376, 0.6),
                 text = "echnologies",
                 font_size = 2.5,
                 font_weight = FontWeight::Bold,
@@ -252,7 +205,7 @@ impl From<Symbol432> for Shape {
                 align = TextAlign::Left,
             ),
             Text!(
-                fill = Color::BLACK,
+                fill = Srgb::<f32>::from_format(named::BLACK).into_linear(),
                 text = "3",
                 font_size = 7.,
                 font_weight = FontWeight::Regular,
@@ -261,7 +214,7 @@ impl From<Symbol432> for Shape {
                 align = TextAlign::Left,
             ),
             Text!(
-                fill = Color::BLACK,
+                fill = Srgb::<f32>::from_format(named::BLACK).into_linear(),
                 text = "2",
                 font_size = 7.,
                 font_weight = FontWeight::Regular,
@@ -284,13 +237,7 @@ impl From<Logo432> for Shape {
             ThreeColoredRing(),
             Squares(),
             BinaryRing(radius = 30.),
-            Circle!(
-                stroke = Stroke::Full {
-                    color: rgb(0x96, 0x96, 0x96),
-                    width: 0.2
-                },
-                radius = 70.,
-            ),
+            Circle!(stroke = Stroke::new_full(c(0.588), 0.2), radius = 70.,),
             Symbol432() > (scale = [4., 4.], translate = [-20., -20.],),
         ])
     }

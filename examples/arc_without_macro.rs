@@ -1,7 +1,7 @@
-use std::{f32::consts::PI, fs};
-
 use dessin::{nalgebra::Rotation2, prelude::*};
+use palette::Srgb;
 use project_root::get_project_root;
+use std::{f32::consts::PI, fs};
 
 fn main() {
     // creates a triangle
@@ -13,11 +13,8 @@ fn main() {
 
     arc.end_angle(PI / 4.);
 
-    // creates a black margin of 0.1
-    arc.stroke(Stroke::Full {
-        color: rgb(0, 50, 75),
-        width: 0.1, //do not worry if it'big. 0.1 is like a proportion, but here, it's the biggest
-    });
+    // creates a margin of 0.1
+    arc.stroke(Stroke::new_full(Srgb::new(0.0, 0.196, 0.294), 0.1));
 
     // chooses a rotation of -10 radians in the trigonometric direction
     arc.rotate(Rotation2::new(-10_f32.to_radians()));

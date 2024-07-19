@@ -1,4 +1,5 @@
 use dessin::{nalgebra::Rotation2, prelude::*};
+use palette::{Srgb, Srgba};
 use project_root::get_project_root;
 use std::fs;
 
@@ -27,12 +28,9 @@ fn main() {
     text.align(TextAlign::Left);
 
     // paints the inside of the text in bright orange
-    text.fill(Fill::Color(rgb(255, 191, 0)));
+    text.fill(Srgba::new(1.0, 0.749, 0.0, 1.0));
 
-    text.stroke(Stroke::Full {
-        color: rgb(150, 10, 10),
-        width: 0.1,
-    });
+    text.stroke(Stroke::new_full(Srgb::new(0.588, 0.039, 0.039), 0.1));
 
     // chooses a rotation of -6 radians in the trigonometric direction
     text.rotate(Rotation2::new(6_f32.to_radians()));

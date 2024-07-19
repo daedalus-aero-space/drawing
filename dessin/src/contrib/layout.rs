@@ -1,6 +1,5 @@
-use nalgebra::Transform2;
-
 use crate::prelude::*;
+use nalgebra::Transform2;
 
 /// Display children on top of one another
 #[derive(Debug, Default, Clone, Shape)]
@@ -257,6 +256,7 @@ mod tests {
         assert_eq!(bb.height(), 2. + height_triangle);
     }
 
+    use palette::{named, Srgb};
     #[test]
     fn layout_of_textbox() {
         let text = "test\nwhy\nnot";
@@ -264,7 +264,7 @@ mod tests {
 
         let first_text = dessin2!(TextBox!(
             { text },
-            fill = Fill::Color(Color::BLACK),
+            fill = Srgb::<f32>::from_format(named::BLACK).into_linear(),
             font_size = 3.6,
             align = TextAlign::Left,
             width = 115.,
@@ -278,7 +278,7 @@ mod tests {
                 { first_text }(),
                 Text!(
                     text = "Notes",
-                    fill = Color::BLACK,
+                    fill = Srgb::<f32>::from_format(named::BLACK).into_linear(),
                     font_weight = FontWeight::Bold,
                     font_size = 3.6,
                     align = TextAlign::Left,

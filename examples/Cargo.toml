@@ -10,6 +10,7 @@ dessin-svg = { version = "0.8.21-pre", path = "../dessin-svg" }
 dessin-image = { version = "0.8.21-pre", path = "../dessin-image" }
 dessin-pdf = { version = "0.8.21-pre", path = "../dessin-pdf" }
 project-root = "0.2.2"
+palette = "^0.7.5"
 
 [[example]]
 name = "432technologies"

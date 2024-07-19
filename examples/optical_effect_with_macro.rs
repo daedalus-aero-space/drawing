@@ -1,5 +1,6 @@
 use dessin::{nalgebra::Rotation2, prelude::*};
 use dessin_svg::SVGOptions;
+use palette::Srgba;
 use project_root::get_project_root;
 use std::{f32::consts::PI, fs};
 
@@ -10,28 +11,21 @@ fn main() {
                 outer_radius = 10.,
                 inner_radius = 0.,
                 span_angle = PI / 10_f32,
-                fill = rgb(0, 0, 0),
-                inner_radius = 0.,
-                span_angle = PI / 10_f32,
-                fill = rgb(0, 0, 0),
+                fill = Srgba::new(0.0, 0.0, 0.0, 1.0),
                 // chooses a rotation of (n*PI)/5 radians in the trigonometric direction
                 rotate = Rotation2::new(PI * (n as f32) / 5_f32)
             )])
         },
         Circle!(
-            // chooses a radius of 10
+            // creates a white circle in the middle
             radius = 1.,
-            fill = rgb(255, 255, 255),
+            fill = Srgba::new(1.0, 1.0, 1.0, 1.0),
         ),
-        // we can add other objects after to let them be in the front
-        // Rectangle!(
-        //     width = 15.,
-        //     height = 15.,
-        //     stroke = Stroke::Full {
-        //         color: rgb(0, 0, 0),
-        //         width: 1.
-        //     }
-        // ),
+        Rectangle!(
+            width = 15.,
+            height = 15.,
+            stroke = Stroke::new_full(Srgba::new(0.0, 0.0, 0.0, 0.01), 1.)
+        )
     ]);
 
     let fond = optical_effect.local_bounding_box();
@@ -43,7 +37,7 @@ fn main() {
         Rectangle!(
             width = fond.width(),
             height = fond.height(),
-            fill = rgb(150, 150, 150),
+            fill = Srgba::new(0.588, 0.588, 0.588, 0.2),
         ),
         // Add optical_effect before the new Rectangle
         { optical_effect }

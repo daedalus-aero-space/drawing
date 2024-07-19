@@ -76,7 +76,15 @@ impl SVGExporter {
 
     fn write_style(&mut self, style: StylePosition) -> Result<(), SVGError> {
         match style.fill {
-            Some(Fill::Color(color)) => write!(self.acc, "fill='{color}' ")?,
+            Some(color) => write!(
+                self.acc,
+                "fill='rgb({} {} {} / {:.3})' ",
+                (color.red * 255.) as u32,
+                (color.green * 255.) as u32,
+                (color.blue * 255.) as u32,
+                color.alpha
+            )?, // pass [0;1] number to [0;255] for a working CSS code (not needed for alpha)
+
             None => write!(self.acc, "fill='none' ")?,
         }
 
@@ -88,10 +96,19 @@ impl SVGExporter {
                 off,
             }) => write!(
                 self.acc,
-                "stroke='{color}' stroke-width='{width}' stroke-dasharray='{on},{off}' "
+                "stroke='rgb({} {} {} / {:.3})' stroke-width='{width}' stroke-dasharray='{on},{off}' ",
+                (color.red * 255.) as u32,
+                (color.green * 255.) as u32,
+                (color.blue * 255.) as u32,
+                color.alpha
             )?,
             Some(Stroke::Full { color, width }) => {
-                write!(self.acc, "stroke='{color}' stroke-width='{width}' ")?
+                write!(self.acc, "stroke='rgb({} {} {} / {:.3})' stroke-width='{width}' ", 
+                (color.red * 255.) as u32,
+                (color.green * 255.) as u32,
+                (color.blue * 255.) as u32,
+                color.alpha
+            )?
             }
 
             None => {}

@@ -5,6 +5,7 @@ use std::ops::{Deref, DerefMut};
 #[derive(Debug, Clone, PartialEq, Shape)]
 pub struct Padding<T> {
     #[shape(into)]
+    #[shape(into)]
     pub shape: T,
 
     pub padding_left: f32,
