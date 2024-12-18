@@ -14,7 +14,7 @@ version = "0.8.21-pre"
 
 [dependencies]
 dessin = { version = "0.8.21-pre", path = "../dessin" }
-fontdue = "^0.8.0"
-image = "^0.24.8"
-nalgebra = "^0.32.3"
-printpdf = { version = "^0.6", features = ["webp", "svg"] }
+fontdue = "^0.9"
+image = "0.24"
+nalgebra = "^0.33"
+printpdf = { version = "^0.7", features = ["webp", "svg"] }

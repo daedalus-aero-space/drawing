@@ -119,7 +119,11 @@ fn dynamic() {
             Ok(())
         }
 
-        fn export_curve(&mut self, _curve: CurvePosition) -> Result<(), Self::Error> {
+        fn export_curve(
+            &mut self,
+            _curve: CurvePosition,
+            StylePosition { fill, stroke }: StylePosition,
+        ) -> Result<(), Self::Error> {
             unimplemented!()
         }
 
@@ -131,10 +135,24 @@ fn dynamic() {
     let my_ref = Default::default();
 
     let c = dessin2!([Dynamic::<Circle>(_ref = &my_ref, radius = 2.,)]);
-    c.write_into_exporter(&mut TestExporter(2.), &Transform2::default())
-        .unwrap();
+    c.write_into_exporter(
+        &mut TestExporter(2.),
+        &Transform2::default(),
+        StylePosition {
+            fill: None,
+            stroke: None,
+        },
+    )
+    .unwrap();
 
     my_ref.write().unwrap().scale([10., 10.]);
-    c.write_into_exporter(&mut TestExporter(20.), &Transform2::default())
-        .unwrap();
+    c.write_into_exporter(
+        &mut TestExporter(20.),
+        &Transform2::default(),
+        StylePosition {
+            fill: None,
+            stroke: None,
+        },
+    )
+    .unwrap();
 }

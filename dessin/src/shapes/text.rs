@@ -236,7 +236,11 @@ mod tests {
                 Ok(())
             }
 
-            fn export_curve(&mut self, _curve: CurvePosition) -> Result<(), Self::Error> {
+            fn export_curve(
+                &mut self,
+                _curve: CurvePosition,
+                StylePosition { fill, stroke }: StylePosition,
+            ) -> Result<(), Self::Error> {
                 Ok(())
             }
 
@@ -279,7 +283,14 @@ mod tests {
         }
 
         dessin
-            .write_into_exporter(&mut Exp, &Default::default())
+            .write_into_exporter(
+                &mut Exp,
+                &Default::default(),
+                StylePosition {
+                    fill: None,
+                    stroke: None,
+                },
+            )
             .unwrap();
     }
 }

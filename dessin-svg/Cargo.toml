@@ -13,8 +13,8 @@ repository = "https://github.com/432-technologies/dessin"
 version = "0.8.21-pre"
 
 [dependencies]
-data-encoding = "^2.5.0"
+data-encoding = "^2.6.0"
 dessin = { version = "0.8.21-pre", path = "../dessin" }
-image = "^0.24.8"
-nalgebra = "^0.32.3"
+image = "0.24"
+nalgebra = "^0.33"
 rand = "^0.8.5"

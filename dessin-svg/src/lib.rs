@@ -286,7 +286,11 @@ impl Exporter for SVGExporter {
         Ok(())
     }
 
-    fn export_curve(&mut self, curve: CurvePosition) -> Result<(), Self::Error> {
+    fn export_curve(
+        &mut self,
+        curve: CurvePosition,
+        StylePosition { fill, stroke }: StylePosition,
+    ) -> Result<(), Self::Error> {
         write!(self.acc, r#"<path d=""#)?;
         self.write_curve(curve)?;
         write!(self.acc, r#""/>"#)?;
@@ -386,7 +390,11 @@ impl Exporter for SVGExporter {
     }
 }
 
-pub fn to_string_with_options(shape: &Shape, options: SVGOptions) -> Result<String, SVGError> {
+pub fn to_string_with_options(
+    shape: &Shape,
+    options: SVGOptions,
+    // StylePosition { fill, stroke }: StylePosition, --
+) -> Result<String, SVGError> {
     let (min_x, min_y, span_x, span_y) = match options.viewport {
         ViewPort::ManualCentered { width, height } => (-width / 2., -height / 2., width, height),
         ViewPort::ManualViewport {
@@ -423,11 +431,39 @@ pub fn to_string_with_options(shape: &Shape, options: SVGOptions) -> Result<Stri
     let mut exporter = SVGExporter::new(min_x, min_y, span_x, span_y);
 
     let parent_transform = nalgebra::convert(Scale2::new(1., -1.));
-    shape.write_into_exporter(&mut exporter, &parent_transform)?;
+
+    // shape.write_into_exporter(
+    //     &mut exporter,
+    //     &parent_transform,
+    //     StylePosition {
+    //         fill: None,
+    //         stroke: None,
+    //     },
+    // )?;
+
+    if let Shape::Style { fill, stroke, .. } = shape {
+        shape.write_into_exporter(
+            &mut exporter,
+            &parent_transform,
+            StylePosition {
+                fill: *fill,
+                stroke: *stroke,
+            },
+        )? //Needed to be complete
+    } else {
+        shape.write_into_exporter(
+            &mut exporter,
+            &parent_transform,
+            StylePosition {
+                fill: None,
+                stroke: None,
+            },
+        )?
+    }
 
     Ok(exporter.finish())
 }
 
 pub fn to_string(shape: &Shape) -> Result<String, SVGError> {
-    to_string_with_options(shape, SVGOptions::default())
+    to_string_with_options(shape, SVGOptions::default()) // Needed to add StylePosition { fill, stroke } using shape
 }

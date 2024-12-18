@@ -1,14 +1,17 @@
-use dessin::font::FontRef;
 use dessin::{
     export::{Export, Exporter},
+    font::FontRef,
     prelude::*,
 };
 use nalgebra::Translation2;
 use printpdf::{
-    BuiltinFont, IndirectFontRef, Line, Mm, PdfDocument, PdfDocumentReference, PdfLayerReference,
+    path::PaintMode, IndirectFontRef, Mm, PdfDocument, PdfDocumentReference, PdfLayerReference,
     Point,
 };
 use std::{collections::HashMap, fmt};
+//------------------------------------------------
+use printpdf::path::WindingOrder;
+//------------------------------------------------
 
 #[derive(Debug)]
 pub enum PDFError {
@@ -121,6 +124,24 @@ impl Exporter for PDFExporter<'_> {
                 .set_outline_thickness(printpdf::Mm(w).into_pt().0);
         }
 
+        // if let None = stroke {
+        //     // self.layer.set_overprint_fill(false)
+        // }
+
+        // if let None = stroke {
+        //     // just works if we have a white background
+        //     let (r, g, b) = (1., 1., 1.);
+        //     self.layer
+        //         .set_outline_color(printpdf::Color::Rgb(printpdf::Rgb {
+        //             r,
+        //             g,
+        //             b,
+        //             icc_profile: None,
+        //         }));
+        //     self.layer
+        //         .set_outline_thickness(printpdf::Mm(0.).into_pt().0)
+        // }
+
         Ok(())
     }
 
@@ -197,7 +218,11 @@ impl Exporter for PDFExporter<'_> {
         Ok(())
     }
 
-    fn export_curve(&mut self, curve: CurvePosition) -> Result<(), Self::Error> {
+    fn export_curve(
+        &mut self,
+        curve: CurvePosition,
+        StylePosition { fill, stroke }: StylePosition,
+    ) -> Result<(), Self::Error> {
         let points1 = curve
             .keypoints
             .iter()
@@ -214,24 +239,42 @@ impl Exporter for PDFExporter<'_> {
                             res.push((Point::new(Mm(start.x), Mm(start.y)), true));
                         }
                         res.append(&mut vec![
-                                (
-                                    Point::new(Mm(b.start_control.x), Mm(b.start_control.y)),
-                                    true,
-                                ),
-                                (Point::new(Mm(b.end_control.x), Mm(b.end_control.y)), false),
-                                (Point::new(Mm(b.end.x), Mm(b.end.y)), next_control),
-                            ]);
+                            (
+                                Point::new(Mm(b.start_control.x), Mm(b.start_control.y)),
+                                true,
+                            ),
+                            (Point::new(Mm(b.end_control.x), Mm(b.end_control.y)), false),
+                            (Point::new(Mm(b.end.x), Mm(b.end.y)), next_control),
+                        ]);
                         res
                     }
                 }
             })
             .collect();
+        //------------------------------------------------------------
 
-        let line = Line {
-            points: points1,
-            is_closed: curve.closed,
+        // let line = Line {
+        //     // Seems to be good --
+        //     points: points1,
+        //     is_closed: curve.closed,
+        // };
+        // self.layer.add_line(line);
+        //-----------------------------------------------------------------
+        let line = printpdf::Polygon {
+            rings: vec![points1],
+            // mode: PaintMode::FillStroke,
+            mode: match (fill, stroke) {
+                (Some(fill), None) => PaintMode::Fill,
+                (None, Some(stroke)) => PaintMode::Stroke,
+                (Some(fill), Some(stroke)) => PaintMode::FillStroke,
+                (None, None) => PaintMode::Clip,
+            },
+            winding_order: WindingOrder::NonZero, // WindingOrder::EvenOdd, is also possible --
         };
-        self.layer.add_line(line);
+
+        self.layer.add_polygon(line);
+
+        //-----------------------------------------------------------------
         Ok(())
     }
 
@@ -257,7 +300,8 @@ impl Exporter for PDFExporter<'_> {
             .or_insert_with(|| match font::get(font.clone()).get(font_weight) {
                 dessin::font::Font::OTF(b) | dessin::font::Font::TTF(b) => {
                     if let Err(err) = self.doc.add_external_font(b.as_slice()) {
-                        panic!("Failed to add external font : {}", err)
+                        println!("Failed to add external font : {}", err);
+                        Err(err).unwrap()
                     } else {
                         self.doc.add_external_font(b.as_slice()).unwrap()
                     }
@@ -301,7 +345,25 @@ pub fn write_to_pdf_with_options(
     let translation = Translation2::new(width / 2., height / 2.);
     let parent_transform = nalgebra::convert(translation);
 
-    shape.write_into_exporter(&mut exporter, &parent_transform)
+    if let Shape::Style { fill, stroke, .. } = shape {
+        shape.write_into_exporter(
+            &mut exporter,
+            &parent_transform,
+            StylePosition {
+                fill: *fill,
+                stroke: *stroke,
+            },
+        ) //TODO Needed to be complete ? --MathNuba
+    } else {
+        shape.write_into_exporter(
+            &mut exporter,
+            &parent_transform,
+            StylePosition {
+                fill: None,
+                stroke: None,
+            },
+        )
+    }
 }
 
 pub fn to_pdf_with_options(

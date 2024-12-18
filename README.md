@@ -1,6 +1,8 @@
 # [dessin](https://docs.rs/dessin/)
 
-**dessin is library aimed at building complex drawings, combine them, move them and export them as PDF or SVG.**
+**Try out the new [API](https://github.com/432-Technologies/dessin/tree/v0.8-pre)**
+
+Generate complex drawing for PDF, SVG, and many more to come ! 
 
 ## Getting started
 
